@@ -9,21 +9,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AuthorInfo: typeof import('./components/features/AuthorInfo.vue')['default']
-    BlogPostCard: typeof import('./components/features/BlogPostCard.vue')['default']
     BlogPostCardAlt: typeof import('./components/features/BlogPostCardAlt.vue')['default']
     Footer: typeof import('./components/common/Footer.vue')['default']
     Header: typeof import('./components/common/Header.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     MainLayout: typeof import('./components/common/MainLayout.vue')['default']
     MarkdownEditor: typeof import('./components/features/MarkdownEditor.vue')['default']
-    MarkdownNew: typeof import('./components/common/MarkdownNew.vue')['default']
-    PostCard: typeof import('./components/features/BlogPostCard.vue')['default']
-    PostCard2: typeof import('./components/features/BlogPostCardAlt.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    TableOfContents: typeof import('./components/common/TableOfContents.vue')['default']
-    Toc: typeof import('./components/common/Toc.vue')['default']
-    TocItem: typeof import('./components/common/TocItem.vue')['default']
-    TocSidebar: typeof import('./components/common/TocSidebar.vue')['default']
   }
 }

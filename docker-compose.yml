@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      # 挂载node_modules以避免本地开发时的权限问题
+      - /app/node_modules
+      # 挂载源代码以支持热重载（开发环境）
+      - .:/app
+    environment:
+      - NODE_ENV=development
+      - VITE_API_BASE_URL=http://180.184.51.116:8000/api

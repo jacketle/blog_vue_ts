@@ -18,7 +18,7 @@ const md = new MarkdownIt({
 let toc: { id: string; text: string; depth: number }[] = []
 
 // 自定义标题渲染器（添加 id）
-md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
+md.renderer.rules.heading_open = (tokens: any[], idx: number, options: any, env: any, self: any) => {
     const token = tokens[idx]
     const level = token.tag.replace('h', '')
     const depth = parseInt(level)
@@ -63,7 +63,7 @@ export function processContent(content: string) {
 
     // 处理 B 站视频嵌入
     const bilibiliRegex = /<iframe[^>]*src="([^"]*player\.bilibili\.com[^"]*)"[^>]*>/gi
-    let updatedHTML = htmlContent.replace(bilibiliRegex, (match, src) => {
+    let updatedHTML = htmlContent.replace(bilibiliRegex, (match: string, src: string) => {
         // 修复：确保 data-src 是解码后的 URL
         const url = new URL(decodeURIComponent(src), window.location.href)
         return `
@@ -89,7 +89,7 @@ export function processContent(content: string) {
 
     // 处理网易云音乐嵌入
     const neteaseRegex = /\[\[netease-cloud:(\d+)\]\]/g
-    updatedHTML = updatedHTML.replace(neteaseRegex, (match, musicId) => {
+    updatedHTML = updatedHTML.replace(neteaseRegex, (match: string, musicId: string) => {
         return `
 <div class="netease-embed">
   <div class="netease-placeholder">
@@ -100,7 +100,6 @@ export function processContent(content: string) {
     server="netease"
     type="song"
     id="${musicId}"
-    class="hidden"
   ></meting-js>
 </div>
 `

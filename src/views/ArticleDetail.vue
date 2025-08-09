@@ -319,18 +319,19 @@ onMounted(async () => {
     toc.value = parsedToc
     console.log('Generated TOC:', toc.value)
 
-    // 检测网易云音乐嵌入内容
-    const hasNeteaseEmbed = post.value.content && post.value.content.includes('netease-embed');
-    // 新增：检测B站视频嵌入内容
-    const hasBilibiliEmbed = post.value.content && post.value.content.includes('player.bilibili.com') && post.value.content.includes('lazy-load');
+        // 修改检测逻辑：在处理后的内容中检测网易云音乐嵌入
+    const hasNeteaseEmbed = html.includes('netease-embed');
+     // 修改检测逻辑：在处理后的内容中检测B站视频嵌入
+    const hasBilibiliEmbed = html.includes('player.bilibili.com') && html.includes('lazy-load');
     // 仅在有网易云音乐嵌入时加载播放器脚本
+
     if (hasNeteaseEmbed) {
       // 动态加载 APlayer CSS
       const apCss = document.createElement('link')
       apCss.rel = 'stylesheet'
       apCss.href = 'https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css'
       document.head.appendChild(apCss)
-
+    
       // 动态加载 APlayer JS
       const apScript = document.createElement('script')
       apScript.src = 'https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js'
@@ -339,14 +340,19 @@ onMounted(async () => {
         const metingScript = document.createElement('script')
         metingScript.src = 'https://cdn.jsdelivr.net/npm/meting@2/dist/Meting.min.js'
         metingScript.onload = () => {
-          document.querySelectorAll('.netease-embed').forEach(el => {
-            const meting = el.querySelector('meting-js')
-            const placeholder = el.querySelector('.netease-placeholder')
-            if (meting && placeholder) {
-              placeholder.classList.add('hidden')
-              meting.classList.remove('hidden')
-            }
-          })
+          // 使用nextTick确保DOM更新完成后再处理
+nextTick(() => {
+  document.querySelectorAll('.netease-embed').forEach(el => {
+    const meting = el.querySelector('meting-js')
+    const placeholder = el.querySelector('.netease-placeholder')
+    if (meting && placeholder) {
+      // 类型断言为HTMLElement以访问style属性
+// 将报错的行替换为以下代码：
+(meting as HTMLElement).style.display = 'block' as const;
+(placeholder as HTMLElement).style.display = 'none' as const;
+    }
+  })
+})
         }
         document.head.appendChild(metingScript)
       }

@@ -214,6 +214,8 @@ onMounted(async () => {
   } catch (error) {
     console.error('加载帖子数据出错:', error)
   }
+   // 设置浏览器标签页标题
+  document.title = 'JacketleBlog社区 - 分享你的知识、经验和见解';
   // 启动自动播放
   startAutoPlay()
 

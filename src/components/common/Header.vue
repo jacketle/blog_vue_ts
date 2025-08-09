@@ -63,7 +63,7 @@
               </router-link>
             </li>
             <li v-if="!isLoggedIn">
-              <a href="http://localhost:8000/admin/" target="_blank" class="btn btn-ghost btn-sm text-base-content hover:text-primary transition-colors">
+              <a href="http://180.184.51.116:8000/admin/" target="_blank" class="btn btn-ghost btn-sm text-base-content hover:text-primary transition-colors">
                 <Icon icon="mdi:shield-account" class="h-5 w-5 mr-1" />
                 后台管理
               </a>
