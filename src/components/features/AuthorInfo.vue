@@ -1,4 +1,3 @@
-//src/components/common/AuthorInfo.vue
 <template>
   <div class="md:w-72 flex-shrink-0 pr-6 mb-6 md:mb-0">
     <div class="sticky top-24 bg-base-100 p-6 rounded-2xl shadow-lg overflow-hidden border border-base-200">
@@ -6,9 +5,10 @@
       <div class="flex flex-col items-center mb-6">
         <!-- 头像 -->
         <div class="mb-4 relative">
-          <div class="avatar">
-            <div class="w-20 h-20 rounded-full overflow-hidden ring-4 ring-primary/20 ring-offset-base-100 ring-offset-4 relative z-10 transition-all duration-300 hover:ring-primary/40">
-              <img :src="`${avatarUrl}`" alt="Author Avatar" class="object-cover" />
+          <div class="avatar placeholder">
+            <div class="w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-4 relative z-10 transition-all duration-300 hover:ring-primary/40 bg-gradient-to-br from-purple-400 to-pink-500 text-white flex items-center justify-center text-2xl font-bold">
+              <img v-if="avatarUrl" :src="avatarUrl" alt="Author Avatar" class="object-cover rounded-full w-full h-full" />
+              <div v-else class="placeholder-avatar">{{ author?.charAt(0).toUpperCase() }}</div>
             </div>
           </div>
           <!-- 装饰性元素 -->
@@ -17,8 +17,16 @@
 
         <!-- 作者信息 -->
         <h3 class="font-bold text-xl mb-2 text-center text-base-content">{{ author }}</h3>
+        <div class="flex flex-wrap items-center justify-center gap-2 mb-3">
+          <div v-if="isStationMaster" class="flex items-center bg-gradient-to-r from-amber-400 to-yellow-500 text-yellow-900 font-bold px-3 py-1 rounded-full">
+            <Icon icon="mdi:crown" class="w-4 h-4 mr-1" />
+            <span class="text-xs">站长</span>
+            <Icon icon="mdi:shield-check" class="w-4 h-4 ml-1" />
+          </div>
+          <span v-else class="badge badge-primary badge-outline badge-sm">普通用户</span>
+        </div>
         <div class="prose prose-sm text-base-content/70 max-w-xs text-center leading-relaxed">
-          <p>{{ bio }}</p>
+          <p>{{ bio || '这个用户很懒，还没有填写个人简介' }}</p>
         </div>
       </div>
 
@@ -33,16 +41,15 @@
         <div class="grid grid-cols-3 gap-2 w-full max-w-xs mx-auto">
           <div class="flex flex-col items-center p-3 rounded-xl bg-base-200/50 hover:bg-base-200 transition-colors duration-300">
             <div class="text-xs font-medium text-base-content/60 mb-1">文章</div>
-            <div class="text-lg font-bold text-primary">{{ articleCount }}</div>
+            <div class="text-lg font-bold text-primary">{{ articleCount || 0 }}</div>
           </div>
           <div class="flex flex-col items-center p-3 rounded-xl bg-base-200/50 hover:bg-base-200 transition-colors duration-300">
-          
-  <div class="text-xs font-medium text-base-content/60 mb-1">评论</div>
-            <div class="text-lg font-bold text-primary">{{ commentCount }}</div>
+            <div class="text-xs font-medium text-base-content/60 mb-1">评论</div>
+            <div class="text-lg font-bold text-primary">{{ commentCount || 0 }}</div>
           </div>
           <div class="flex flex-col items-center p-3 rounded-xl bg-base-200/50 hover:bg-base-200 transition-colors duration-300">
             <div class="text-xs font-medium text-base-content/60 mb-1">标签</div>
-            <div class="text-lg font-bold text-primary">{{ tagCount }}</div>
+            <div class="text-lg font-bold text-primary">{{ tagCount || 0 }}</div>
           </div>
         </div>
       </div>
@@ -56,7 +63,6 @@
           <Icon icon="mdi:email-outline" class="h-5 w-5" />
         </a>
         <a href="#" class="btn btn-sm btn-circle btn-ghost text-base-content/60 hover:text-primary hover:bg-primary/10 transition-colors duration-300" title="关于(懒QWQ)">
-
           <Icon icon="mdi:information-outline" class="h-5 w-5" />
         </a>
       </div>
@@ -70,8 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
-import { ref } from 'vue'
+import { Icon } from '@iconify/vue'
 
 // 定义 props 的类型
 interface AuthorInfoProps {
@@ -81,16 +86,17 @@ interface AuthorInfoProps {
   commentCount?: number
   tagCount?: number
   avatarUrl?: string
+  isStationMaster?: boolean
 }
 
 // 设置默认值
 const props = withDefaults(defineProps<AuthorInfoProps>(), {
-  bio: '技术博客作者，专注于前端开发与开源项目。',
-  articleCount: 30,
-  commentCount: 150,
-  tagCount: 20,
-  avatarUrl: ''
-
+  bio: '',
+  articleCount: 0,
+  commentCount: 0,
+  tagCount: 0,
+  avatarUrl: '',
+  isStationMaster: false
 })
 
 // 解构 props 用于模板使用
@@ -100,12 +106,11 @@ const {
   articleCount,
   commentCount,
   tagCount,
-  avatarUrl
+  avatarUrl,
+  isStationMaster
 } = props
-
-
-
 </script>
+
 <style scoped>
 /* 移动端专用样式 */
 @media (max-width: 768px) {

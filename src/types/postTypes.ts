@@ -18,6 +18,7 @@ export interface Post {
         post_count?: number;
         tag_count?: number;
         avatar_url?: string;  // 新增字段
+        is_station_master?: boolean;  // 添加站长标识字段
     };
     tag_list: string[];  // 修改为字符串数组
     tags: string;        // 保留此字段
@@ -26,4 +27,5 @@ export interface Post {
     is_published: boolean;     // 修改字段名以匹配后端
     views?: number;           // 可选字段
     isFeatured?: boolean;     // 可选字段
+    click_count?: number;     // 新增字段，用于记录点击次数
 }

@@ -133,6 +133,12 @@
 
 <script setup lang="ts">
 import MainLayout from '@/components/common/MainLayout.vue';
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  // 设置浏览器标签页标题
+  document.title = '站点信息 - JacketleBlog社区';
+})
 </script>
 
 <style scoped>

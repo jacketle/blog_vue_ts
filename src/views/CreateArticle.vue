@@ -264,15 +264,10 @@ const hasErrors = computed(() => {
 // 预设封面图片列表
 const availableCoverImages = ref([
   // 'https://mypicture.s3.bitiful.net/2025/08/e9b42d6674a9e20f0676d7f72336dcaf.webp',
-  // 'https://mypicture.s3.bitiful.net/2025/08/d38d32ce1f56071f30edc4a651bab2b7.webp' ,
-  // 'https://mypicture.s3.bitiful.net/2025/08/240ea099b19bbabb5b0a8166c5bafcf8.webp',
-  // 'https://mypicture.s3.bitiful.net/2025/08/8b2a18290c7bff14152eb609902f65b0.webp',
-  // 'https://mypicture.s3.bitiful.net/2025/08/4388ac518a6f4343e6e2046810233290.webp',
-  'https://placehold.co/600x400/C3B1E1/333333.png?text=Cover+2.png',
-  'https://placehold.co/600x400/B2EBF2/333333.jpg?text=Cover+3.jpg',
-  'https://placehold.co/600x400/A7FFEB/333333.gif?text=Cover+4.gif',
-  'https://placehold.co/600x400/E0BBE4/333333.webp?text=Cover+5.webp',
-  'https://placehold.co/600x400/957DAD/333333.svg?text=Cover+6.svg',
+  'https://pic.sl.al/gdrive/pic/2025-09-18/hash_5bae1e04_10d3da3b5b6b_wallhaven-n62d8q.webp',
+  'https://f.pz.al/pzal/2025/09/15/625b9face0924.jpg',
+  'https://mypicture.s3.bitiful.net/2025/08/240ea099b19bbabb5b0a8166c5bafcf8.webp',
+  'https://pic.sl.al/gdrive/pic/2025-09-18/hash_697a2e7d_12bcd4bf98c2_wallhaven-q213e5.webp',
 ]);
 
 // 添加分类代码映射函数
@@ -492,5 +487,8 @@ router.push(`/post/${createdPost.slug}`);
     submitting.value = false
   }
 }
-
+onMounted(() => {
+  // 设置浏览器标签页标题
+  document.title = '编辑文章 - JacketleBlog社区';
+})
 </script>

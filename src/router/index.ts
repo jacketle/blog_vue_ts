@@ -15,6 +15,8 @@ import Test from '../views/Test.vue';
 import UserProfile from '../views/UserProfile.vue';
 import EditPost from '../views/EditPost.vue'; // 添加这一行
 import SiteInfo from '../views/SiteInfo.vue';
+import AuthorProfile from '../views/AuthorProfile.vue'; // 添加这一行
+import Archive from '../views/Archive.vue'; // 添加这一行
 
 // 定义路由规则
 const routes: Array<RouteRecordRaw> = [
@@ -22,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: Home,
+  },
+   {
+    path: '/archive',
+    name: 'Archive',
+    component: Archive,
   },
   {
     path: '/login',
@@ -46,6 +53,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/userProfile',
     name: 'UserProfile',
     component: UserProfile,
+  },
+   {
+    path: '/author/:username',
+    name: 'AuthorProfile',
+    component: AuthorProfile,
+    props: true,
   },
   {
     path: '/create',

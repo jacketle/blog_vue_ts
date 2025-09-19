@@ -223,6 +223,7 @@ async fetchPosts(
         tag_count: postData.author?.tag_count !== undefined ? 
           parseInt(postData.author.tag_count as any, 10) : undefined,
         avatar_url: postData.author?.avatar_url || undefined,  // 新增字段
+        is_station_master: postData.author?.is_station_master || false,  // 添加站长标识字段
       };
       
       // 不再需要类型断言，可以直接使用postData
@@ -238,7 +239,8 @@ async fetchPosts(
         tags: postData.tags || '',
         category: postData.category || '',
         cover_image_url: postData.cover_image_url || '',
-        is_published: postData.is_published || false
+        is_published: postData.is_published || false,
+        click_count: postData.click_count || 0  // 添加click_count字段
       };
       
       return post;

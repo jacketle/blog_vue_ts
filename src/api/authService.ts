@@ -93,6 +93,26 @@ export const authService = {
     
     return userData;
   },
+
+    /**
+   * 根据用户名获取用户资料
+   * @param username 用户名
+   * @returns 用户资料
+   */
+  async getUserProfileByUsername(username: string): Promise<User> {
+    const response = await authClient.get(`/users/profile/${username}/`);
+    const userData = response.data;
+    
+    // 确保post_count和tag_count是整数类型
+    if (userData.post_count !== undefined) {
+      userData.post_count = parseInt(userData.post_count as any, 10);
+    }
+    if (userData.tag_count !== undefined) {
+      userData.tag_count = parseInt(userData.tag_count as any, 10);
+    }
+    
+    return userData;
+  },
     /**
    * 更新用户资料
    * @param profileData 需要更新的用户资料数据

@@ -44,6 +44,12 @@
                 首页
               </router-link>
             </li>
+              <li>
+              <router-link to="/archive" class="btn btn-ghost btn-sm text-base-content hover:text-primary transition-colors">
+                <Icon icon="mdi:archive" class="h-5 w-5 mr-1" />
+                归档
+              </router-link>
+            </li>
             <li>
               <router-link to="/create" class="btn btn-ghost btn-sm text-base-content hover:text-primary transition-colors">
                 <Icon icon="mdi:pencil" class="h-5 w-5 mr-1" />
@@ -119,6 +125,15 @@
               首页
             </router-link>
           </li>
+          <li>
+            <router-link
+                to="/archive"
+                class="btn btn-ghost hover:bg-base-200 transition-colors text-base-content hover:text-primary"
+            >
+              <Icon icon="mdi:archive" class="h-5 w-5 mr-1" />
+              归档
+            </router-link>
+          </li>
           <li v-if="isLoggedIn">
             <router-link
                 to="/create"
@@ -148,7 +163,7 @@
           </li>
           <li v-if="isLoggedIn">
           <a
-                href="http://localhost:8000/admin/"
+                href="http://180.184.51.116:8000/admin/"
                 target="_blank"
                 class="btn btn-ghost hover:bg-base-200 transition-colors text-base-content hover:text-primary"
             >

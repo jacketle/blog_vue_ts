@@ -1,4 +1,3 @@
-//src/views/PostDetail.vue
 <template>
   <Header />
   <!-- 添加暗色模式背景 -->
@@ -27,22 +26,27 @@
           :articleCount="post.author.post_count || 0"
           :commentCount="0"
           :tagCount="post.author.tag_count || 0"
+          :is-station-master="post.author.is_station_master || false"
       />
 
       <!-- 中间内容（已修改宽度） -->
       <div class="flex-1 md:flex-[4] min-w-2">
         <!-- 标题 -->
-        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-base-content leading-tight">{{ post.title }}</h1>
+        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 text-base-content dark:text-base-100 leading-tight">{{ post.title }}</h1>
 
         <!-- 作者与时间 -->
-        <div class="flex flex-wrap items-center text-base-content/70 mb-6 text-sm sm:text-base">
+        <div class="flex flex-wrap items-center text-base-content dark:text-base-200 mb-6 text-sm sm:text-base">
           <div class="flex items-center mr-4">
             <icon icon="mdi:account" class="w-5 h-5 mr-2 text-primary" />
-            <span>{{ post.author.username }}</span>
+            <span class="font-medium">{{ post.author.username }}</span>
+          </div>
+          <div class="flex items-center mr-4">
+            <icon icon="mdi:clock-outline" class="w-5 h-5 mr-2 text-primary" />
+            <span class="font-medium">{{ formattedDate }}</span>
           </div>
           <div class="flex items-center">
-            <icon icon="mdi:clock-outline" class="w-5 h-5 mr-2 text-primary" />
-            <span>{{ formattedDate }}</span>
+            <icon icon="mdi:eye" class="w-5 h-5 mr-2 text-primary" />
+            <span class="font-medium">{{ post.click_count || 0 }} 次阅读</span>
           </div>
         </div>
 
@@ -52,38 +56,62 @@
         </div>
 
         <!-- 标签 -->
-        <div class="flex flex-wrap gap-2 mb-8">
+        <div v-if="tagListArray.length > 0" class="flex flex-wrap gap-2 mb-6 p-4 bg-base-100 dark:bg-base-300 rounded-xl border border-base-200 dark:border-base-700">
+          <div class="flex items-center text-base-content/70 text-sm mr-3">
+            <icon icon="mdi:tag-multiple" class="w-4 h-4 mr-1 text-primary" />
+            <span>标签：</span>
+          </div>
           <span
               v-for="tag in tagListArray"
               :key="tag"
-              class="badge badge-primary badge-outline text-sm sm:text-base"
+              class="badge badge-primary badge-outline text-sm sm:text-base hover:badge-primary hover:text-white transition-all duration-200 cursor-pointer"
           >
             <icon icon="mdi:tag" class="w-4 h-4 mr-1 text-primary" />{{ tag }}
           </span>
         </div>
 
-<!-- 操作按钮 -->
-        <div class="flex justify-end mt-8 gap-2">
-          <button 
-              v-if="authStore.user?.id === post.author.id || authStore.user?.is_station_master"
-              @click="editPost"
-              class="btn btn-outline btn-primary rounded-full shadow-md"
-          >
-            <icon icon="mdi:pencil" class="w-5 h-5 mr-2" />
-            编辑
-          </button>
-          <button 
-              v-if="authStore.user?.id === post.author.id || authStore.user?.is_station_master"
-              @click="deletePost"
-              class="btn btn-outline btn-error rounded-full shadow-md"
-          >
-            <icon icon="mdi:delete" class="w-5 h-5 mr-2" />
-            删除
-          </button>
-          <a href="/" class="btn btn-outline btn-primary rounded-full shadow-md">
-            <icon icon="mdi:arrow-left" class="w-5 h-5 mr-2" />
-            返回文章列表
-          </a>
+        <!-- 内容过少提示 -->
+        <div v-if="contentTooShort" class="alert alert-info shadow-lg mb-6">
+          <div>
+            <icon icon="mdi:information" class="w-5 h-5 mr-2" />
+            <span>文章内容似乎有些简短，作者可能还在完善中...</span>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="flex flex-wrap justify-between items-center mt-4 pt-4 border-t border-base-300 dark:border-base-700">
+          <!-- 左侧统计信息 -->
+          <div class="flex items-center text-base text-base-content/80 font-medium mb-2 sm:mb-0">
+            <icon icon="mdi:information-outline" class="w-5 h-5 mr-2 text-primary" />
+            <span>最后更新：{{ formatDate(post.updated_at) }}</span>
+          </div>
+          
+          <!-- 右侧操作按钮 -->
+          <div class="flex flex-wrap gap-2">
+            <button 
+                v-if="authStore.user?.id === post.author.id || authStore.user?.is_station_master"
+                @click="editPost"
+                class="btn btn-outline btn-primary rounded-full shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <icon icon="mdi:pencil" class="w-5 h-5 mr-2" />
+              编辑
+            </button>
+            <button 
+                v-if="authStore.user?.id === post.author.id || authStore.user?.is_station_master"
+                @click="deletePost"
+                class="btn btn-outline btn-error rounded-full shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <icon icon="mdi:delete" class="w-5 h-5 mr-2" />
+              删除
+            </button>
+            <button 
+              @click="goBack" 
+              class="btn btn-outline btn-primary rounded-full shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <icon icon="mdi:arrow-left" class="w-5 h-5 mr-2" />
+              返回上一页
+            </button>
+          </div>
         </div>
       </div>
 
@@ -91,59 +119,77 @@
       <!-- 右侧目录 -->
       <div class="w-full md:w-64 flex-shrink-0 mt-8 md:mt-0">
         <!-- 目录容器 -->
-        <div class="md:sticky md:top-24 bg-base-100 dark:bg-base-300 p-4 rounded-lg shadow-md h-full md:max-h-[calc(100vh-120px)] overflow-hidden">
-
-          <!-- 动态霓虹标题 -->
-          <h3 class="font-bold text-lg mb-4 p-4 border-b border-base-300 dark:border-base-700 bg-base-100 dark:bg-base-300 rounded-t-lg relative group">
-            <!-- 动态光效粒子 -->
-            <div class="absolute -top-4 -right-4 w-8 h-8 bg-pink-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <div class="absolute -bottom-4 -left-4 w-8 h-8 bg-purple-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
-
-            <!-- 霓虹标题按钮 -->
-            <span class="inline-block px-3 py-1.5 bg-gradient-to-r from-pink-400 via-purple-500 to-yellow-300 dark:from-pink-600 dark:via-purple-700 dark:to-yellow-500 text-white text-sm rounded-full shadow-md transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-pink-500/30">
-              <span class="i-mdi-book-open-page-variant text-lg mr-2 opacity-90"></span>
-              <span class="whitespace-nowrap text-shadow">文章目录</span>
-            </span>
-
-            <!-- 动态光晕 -->
-            <div class="absolute inset-0 bg-gradient-to-br from-pink-400/5 via-purple-500/5 to-yellow-300/5 dark:from-pink-600/5 dark:via-purple-700/5 dark:to-yellow-500/5 rounded-t-lg blur-xl"></div>
+        <div class="md:sticky md:top-24 bg-base-100 dark:bg-base-300 p-4 rounded-xl shadow-lg h-full md:max-h-[calc(100vh-120px)] overflow-hidden border border-base-200 dark:border-base-700">
+          
+          <!-- 标题 -->
+          <h3 class="font-bold text-lg mb-4 p-3 border-b border-base-300 dark:border-base-700 bg-base-100 dark:bg-base-300 rounded-lg flex items-center">
+            <Icon icon="mdi:book-open-page-variant" class="text-primary w-5 h-5 mr-2" />
+            <span class="text-base-content">文章目录</span>
           </h3>
 
           <!-- 目录内容 -->
-          <div class="overflow-y-auto pr-2 h-full">
-            <!-- 动态淡入动画 -->
-            <nav class="space-y-1.5 animate-fade-in">
+          <div class="overflow-y-auto pr-2 h-full pb-2">
+            <nav class="space-y-2">
               <a
                   v-for="(item, index) in toc"
                   :key="index"
                   :href="'#' + item.id"
-                  class="block text-sm transition-all duration-300 py-2 px-3 rounded-lg hover:bg-base-200 hover:text-primary hover:shadow-md transform hover:scale-105"
+                  class="block text-sm transition-all duration-200 py-2.5 px-3.5 rounded-lg hover:bg-base-200 hover:text-primary relative group"
                   :class="[
-                  { 'pl-6': item.depth === 3 },
-                  { 'pl-4': item.depth === 2 },
-                  { 'text-pink-500 dark:text-pink-400': item.depth === 2 },
-                  { 'text-purple-500 dark:text-purple-400': item.depth === 3 }
+                  { 'pl-8': item.depth === 3 },
+                  { 'pl-6': item.depth === 2 },
+                  { 'font-medium': item.depth === 2 },
+                  { 'text-base-content/80': item.depth === 2 },
+                  { 'text-base-content/70': item.depth === 3 }
                 ]"
               >
+                <!-- 连接线 -->
+                <span 
+                  v-if="index > 0" 
+                  class="absolute left-1 top-0 bottom-0 w-px bg-base-300 dark:bg-base-600"
+                ></span>
+                
                 <span class="toc-text flex items-center">
                   <!-- 深度图标（使用 Iconify） -->
-                  <span
+                  <Icon
                       v-if="item.depth === 2"
-                      class="i-mdi-circle-medium text-pink-500/40 dark:text-pink-400/40 w-3 h-3 mr-2 opacity-80"
-                  ></span>
-                  <span
+                      icon="mdi:circle-medium"
+                      class="text-primary/80 w-4 h-4 mr-2.5 flex-shrink-0"
+                  />
+                  <Icon
                       v-if="item.depth === 3"
-                      class="i-mdi-circle-small text-purple-500/40 dark:text-purple-400/40 w-3 h-3 mr-2 opacity-80"
-                  ></span>
+                      icon="mdi:circle-small"
+                      class="text-secondary/80 w-3.5 h-3.5 mr-3 flex-shrink-0"
+                  />
+                  
                   <!-- 文字内容 -->
-                  <span class="relative">
+                  <span class="truncate">
                     {{ item.text }}
-                    <!-- 动态樱花装饰 -->
-                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-pink-300 dark:bg-pink-600/30 rounded-full blur-sm opacity-80 animate-float"></span>
+                  </span>
+                  
+                  <!-- 悬停指示器 -->
+                  <span class="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Icon icon="mdi:arrow-right-thin" class="text-primary w-4 h-4" />
                   </span>
                 </span>
               </a>
+              
+              <!-- 无目录内容提示 -->
+              <div v-if="toc.length === 0" class="text-center py-6 text-base-content/50 text-sm">
+                <div class="flex flex-col items-center justify-center">
+                  <Icon icon="mdi:file-document-outline" class="text-2xl mb-2" />
+                  <span>暂无目录内容</span>
+                </div>
+              </div>
             </nav>
+            
+            <!-- 底部装饰 -->
+            <div class="pt-2 border-t border-base-200 dark:border-base-700 mt-2">
+              <div class="flex items-center text-xs text-base-content/40">
+                <Icon icon="mdi:format-list-bulleted" class="mr-1" />
+                <span>共 {{ toc.length }} 个项目</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -182,13 +228,15 @@ const post = ref({
     avatar_url: '',
     bio: '',
     post_count: 0,
-    tag_count: 0
+    tag_count: 0,
+    is_station_master: false
   },
   tag_list: [],
   tags: '',
   category: '',
   cover_image_url: '',
-  is_published: false
+  is_published: false,
+  click_count: 0  // 添加click_count字段
 })
 
 // 计算属性，将tag_list字符串转换为数组用于显示
@@ -197,6 +245,12 @@ const tagListArray = computed(() => {
   console.log('tag_list类型:', typeof post.value.tag_list);
   console.log('是否为数组:', Array.isArray(post.value.tag_list));
   return post.value.tag_list || [];
+});
+
+// 判断内容是否过短
+const contentTooShort = computed(() => {
+  const contentText = post.value.content.replace(/<[^>]*>/g, '').trim();
+  return contentText.length < 50; // 如果纯文本内容少于50个字符，认为内容过短
 });
 
 // 路由参数
@@ -304,6 +358,11 @@ const deletePost = async () => {
   }
 };
 
+// 返回上一页功能
+const goBack = () => {
+  router.go(-1);
+};
+
 // 加载文章数据
 onMounted(async () => {
   const data = await fetchPostBySlug(postSlug)
@@ -394,8 +453,10 @@ nextTick(() => {
   }
   loading.value = false
   
-  if (post.value && post.value.title) {
-    document.title = `${post.value.title} - 我的博客`
+ if (post.value && post.value.title) {
+    document.title = `${post.value.title} - JacketleBlog社区`;
+  } else {
+    document.title = '文章详情 - JacketleBlog社区';
   }
 })
 </script>

@@ -208,6 +208,10 @@ const socialLogin = (platform: string) => {
   console.log(`正在用 ${platform} 登录...`);
   // 这里可以添加一个更友好的提示，例如使用 Toast 消息
 };
+onMounted(() => {
+  // 设置浏览器标签页标题
+  document.title = '用户登录 - JacketleBlog社区';
+})
 </script>
 
 <style scoped>

@@ -23,5 +23,6 @@ onUnmounted(() => {
   if (timer) {
     clearTimeout(timer)
   }
+  document.title = '页面未找到 - JacketleBlog社区';
 })
 </script>

@@ -250,6 +250,10 @@ if (error.response?.data) {
     isLoading.value = false
   }
 }
+onMounted(() => {
+  // 设置浏览器标签页标题
+  document.title = '用户注册 - JacketleBlog社区';
+})
 </script>
 
 <style scoped>

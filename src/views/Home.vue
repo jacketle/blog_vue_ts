@@ -33,15 +33,15 @@
       <p class="text-xl mb-8 text-base-content opacity-70">分享你的知识、经验和见解，与志同道合的人一起成长</p>
     </div>
 
-  <div class="mb-8 flex justify-between items-center">
-    <h2 class="text-3xl font-bold">最新帖子</h2>
-    <div class="flex items-center space-x-4">
-        <div class="flex items-center space-x-2">
+  <div class="mb-8 flex justify-between items-center flex-col sm:flex-row gap-4">
+    <h2 class="text-3xl font-bold self-start">最新帖子</h2>
+    <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+      <div class="flex items-center space-x-2">
         <input 
           v-model="searchKeyword"
           type="text" 
           placeholder="输入关键词搜索..." 
-          class="input input-bordered w-full max-w-xs"
+          class="input input-bordered w-full sm:max-w-xs"
           @keyup.enter="handleSearch"
         />
         <button 
@@ -50,15 +50,15 @@
         >
           搜索
         </button>
-        </div>
-    <div class="tabs tabs-boxed">
-      <a class="tab" :class="currentCategory === '' ? 'tab-active' : ''" @click="handleCategoryChange('')">全部</a>
-      <a class="tab" :class="currentCategory === 'tech' ? 'tab-active' : ''" @click="handleCategoryChange('tech')">技术</a>
-      <a class="tab" :class="currentCategory === 'chat' ? 'tab-active' : ''" @click="handleCategoryChange('chat')">杂谈</a>
-      <a class="tab" :class="currentCategory === 'life' ? 'tab-active' : ''" @click="handleCategoryChange('life')">生活</a>
+      </div>
+      <div class="tabs tabs-boxed overflow-x-auto w-full sm:w-auto">
+        <a class="tab whitespace-nowrap" :class="currentCategory === '' ? 'tab-active' : ''" @click="handleCategoryChange('')">全部</a>
+        <a class="tab whitespace-nowrap" :class="currentCategory === 'tech' ? 'tab-active' : ''" @click="handleCategoryChange('tech')">技术</a>
+        <a class="tab whitespace-nowrap" :class="currentCategory === 'chat' ? 'tab-active' : ''" @click="handleCategoryChange('chat')">杂谈</a>
+        <a class="tab whitespace-nowrap" :class="currentCategory === 'life' ? 'tab-active' : ''" @click="handleCategoryChange('life')">生活</a>
+      </div>
     </div>
-    </div>
-    </div>
+  </div>
     <div v-if="postStore.loading" class="text-center py-12">
       <span class="loading loading-spinner loading-lg"></span>
     </div>
